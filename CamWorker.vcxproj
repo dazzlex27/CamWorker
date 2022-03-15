@@ -90,12 +90,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FrameProcessors\FrameProcessor.cpp" />
+    <ClCompile Include="FrameProcessors\WorkerOneFrameProcessor.cpp" />
+    <ClCompile Include="FrameProcessors\WorkerTwoFrameProcessor.cpp" />
+    <ClCompile Include="FrameDispatcher.cpp" />
     <ClCompile Include="FrameQueue.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="FrameProcessors\WorkerOneFrameProcessor.h" />
+    <ClInclude Include="FrameProcessors\WorkerTwoFrameProcessor.h" />
+    <ClInclude Include="FrameDispatcher.h" />
     <ClInclude Include="Frame.h" />
+    <ClInclude Include="FrameProcessors\FrameProcessor.h" />
     <ClInclude Include="FrameQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

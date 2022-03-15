@@ -2,19 +2,22 @@
 
 #include "Common.h"
 
-class Frame
+namespace cw
 {
-private:
-	cv::Mat _imageData;
-	hrc::time_point _timestamp;
-
-public:
-	Frame(const cv::Mat& imageData, const hrc::time_point& timestamp)
+	class Frame
 	{
-		_imageData = imageData;
-		_timestamp = timestamp;
-	}
+	private:
+		cv::Mat _imageData;
+		hrc::time_point _timestamp;
 
-	cv::Mat GetImageData() const { return _imageData; }
-	hrc::time_point GetTimestamp() const { return _timestamp; }
-};
+	public:
+		Frame(const cv::Mat& imageData, const hrc::time_point& timestamp)
+		{
+			_imageData = imageData;
+			_timestamp = timestamp;
+		}
+
+		cv::Mat GetImageData() const { return _imageData; }
+		hrc::time_point GetTimestamp() const { return _timestamp; }
+	};
+}
