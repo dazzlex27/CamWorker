@@ -33,6 +33,9 @@
     <ClCompile Include="FrameProcessors\WorkerOneFrameProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CamWorker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FrameQueue.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameProcessors\WorkerTwoFrameProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CamWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

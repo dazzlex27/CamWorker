@@ -3,12 +3,12 @@
 
 using namespace cw;
 
-cw::FrameDispatcher::FrameDispatcher(cv::VideoCapture& capture, const uint queueCapacity)
+FrameDispatcher::FrameDispatcher(cv::VideoCapture& capture, const uint queueCapacity)
 	: _capture(capture), _queue(queueCapacity)
 {
 }
 
-cw::FrameDispatcher::~FrameDispatcher()
+FrameDispatcher::~FrameDispatcher()
 {
 	Stop();
 	RemoveAllSubscribers();

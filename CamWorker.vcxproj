@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CamWorker.cpp" />
     <ClCompile Include="FrameProcessors\FrameProcessor.cpp" />
     <ClCompile Include="FrameProcessors\WorkerOneFrameProcessor.cpp" />
     <ClCompile Include="FrameProcessors\WorkerTwoFrameProcessor.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CamWorker.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="FrameProcessors\WorkerOneFrameProcessor.h" />
     <ClInclude Include="FrameProcessors\WorkerTwoFrameProcessor.h" />

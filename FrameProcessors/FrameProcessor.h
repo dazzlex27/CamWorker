@@ -15,7 +15,7 @@ namespace cw
 	public:
 		FrameProcessor();
 		FrameProcessor(const FrameProcessor& other);
-		~FrameProcessor();
+		virtual ~FrameProcessor();
 
 		virtual void PushFrame(const Frame& frame);
 		Frame TryGetNextFrame(bool& success);

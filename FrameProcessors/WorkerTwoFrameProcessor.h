@@ -14,5 +14,7 @@ namespace cw
 
 	private:
 		virtual Frame ProcessNextFrame(const Frame& frame) override;
+
+		bool CheckIfNeedToFlipImage(const cv::Mat& image);
 	};
 }
