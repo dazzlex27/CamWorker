@@ -1,6 +1,4 @@
-!!bin/
-.vs/
-obj
+# Debug symbols
 *.pdb
 
 # Prerequisites
