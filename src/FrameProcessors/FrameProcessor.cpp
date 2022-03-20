@@ -16,6 +16,8 @@ FrameProcessor::FrameProcessor(const FrameProcessor& other)
 FrameProcessor::~FrameProcessor()
 {
 	_runFrameProcessing = false;
+	_incomingFrameQueue.StopQueue();
+	_processedFrameQueue.StopQueue();
 	_thProcessing.join();
 }
 
@@ -33,9 +35,8 @@ void cw::FrameProcessor::RunQueueProcessing()
 {
 	while (_runFrameProcessing)
 	{
-		bool success = false;
-		Frame nextFrame = _incomingFrameQueue.TryPop(success);
-		if (!success)
+		Frame nextFrame = _incomingFrameQueue.Pop();
+		if (nextFrame.GetImageData().empty())
 			continue;
 
 		Frame processedFrame = ProcessNextFrame(nextFrame);

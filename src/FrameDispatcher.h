@@ -2,8 +2,9 @@
 
 #include <list>
 #include <functional>
-#include "FrameQueue.h"
+#include "CircularQueue.h"
 #include "FrameProcessors/FrameProcessor.h"
+#include "Frame.h"
 
 namespace cw
 {
@@ -11,7 +12,7 @@ namespace cw
 	{
 	private:
 		cv::VideoCapture _capture;
-		FrameQueue _queue;
+		CircularQueue<Frame> _queue;
 		std::atomic<bool> _isFeedActive;
 		std::vector<std::shared_ptr<FrameProcessor>> _subscribers;
 		std::thread _thRead;

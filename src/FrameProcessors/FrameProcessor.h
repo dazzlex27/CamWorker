@@ -1,14 +1,15 @@
 #pragma once
 
-#include "../FrameQueue.h"
+#include "../Frame.h"
+#include "../CircularQueue.h"
 
 namespace cw
 {
 	class FrameProcessor
 	{
 	private:
-		FrameQueue _incomingFrameQueue;
-		FrameQueue _processedFrameQueue;
+		CircularQueue<Frame> _incomingFrameQueue;
+		CircularQueue<Frame> _processedFrameQueue;
 		std::thread _thProcessing;
 		std::atomic<bool> _runFrameProcessing;
 

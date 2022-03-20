@@ -29,6 +29,7 @@ void FrameDispatcher::Stop()
 	if (!_isFeedActive)
 		return;
 
+	_queue.StopQueue();
 	_isFeedActive = false;
 	_thRead.join();
 	_thNotify.join();
@@ -46,7 +47,7 @@ void FrameDispatcher::RemoveAllSubscribers()
 
 void FrameDispatcher::RunFeedReading()
 {
-	std::cout << "starting feed reading thread..." << std::endl;
+	std::cout << "starting feed reading..." << std::endl;
 
 	// set up specific video config if necessary
 	//_capture.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
@@ -77,12 +78,12 @@ void FrameDispatcher::RunFeedReading()
 		_queue.Push(frame);
 	}
 
-	std::cout << "feed reading thread finished" << std::endl;
+	std::cout << "feed reading finished" << std::endl;
 }
 
 void FrameDispatcher::RunSubscriberNotification()
 {
-	std::cout << "starting subscriber notification thread..." << std::endl;
+	std::cout << "starting subscriber notification..." << std::endl;
 
 	while (_isFeedActive)
 	{
@@ -93,14 +94,11 @@ void FrameDispatcher::RunSubscriberNotification()
 			continue;
 		}
 
-		bool success = false;
-		Frame nextFrame = _queue.TryPop(success);
-		if (!success)
-			continue;
+		Frame nextFrame = _queue.Pop();
 
 		for (auto& subscriber : _subscribers)
 			subscriber->PushFrame(nextFrame);
 	}
 
-	std::cout << "subscriber notification thread finished" << std::endl;
+	std::cout << "subscriber notification finished" << std::endl;
 }

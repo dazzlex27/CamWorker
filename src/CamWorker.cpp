@@ -1,5 +1,5 @@
 #include "CamWorker.h"
-#include "FrameQueue.h"
+#include "CircularQueue.h"
 #include "FrameDispatcher.h"
 #include "FrameProcessors/WorkerOneFrameProcessor.h"
 #include "FrameProcessors/WorkerTwoFrameProcessor.h"

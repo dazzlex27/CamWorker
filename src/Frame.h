@@ -1,9 +1,12 @@
 #pragma once
 
-#include "Common.h"
+#include <chrono>
+#include <opencv2/opencv.hpp> // probably not the best to include OpenCV in a common header
 
 namespace cw
 {
+	typedef std::chrono::high_resolution_clock hrc;
+
 	class Frame
 	{
 	private:
@@ -11,6 +14,12 @@ namespace cw
 		hrc::time_point _timestamp;
 
 	public:
+		Frame()
+		{
+			_imageData = cv::Mat();
+			_timestamp = hrc::now();
+		}
+
 		Frame(const cv::Mat& imageData, const hrc::time_point& timestamp)
 		{
 			_imageData = imageData;
