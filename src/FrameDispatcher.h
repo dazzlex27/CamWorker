@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <thread>
 #include <functional>
 #include "CircularQueue.h"
 #include "FrameProcessors/FrameProcessor.h"

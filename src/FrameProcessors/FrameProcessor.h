@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+#include <thread>
 #include "../Frame.h"
 #include "../CircularQueue.h"
 

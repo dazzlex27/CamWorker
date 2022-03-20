@@ -6,11 +6,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project ("CamWorker")
 
+find_package(OpenCV 4 REQUIRED)
+
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 file(GLOB CamWorker_SRC "src/*.h" "src/*.cpp" "src/FrameProcessors/*.h" "src/FrameProcessors/*.cpp")
 add_executable(CamWorker ${CamWorker_SRC})
 
-FIND_PACKAGE(OpenCV REQUIRED)     
-
-TARGET_LINK_LIBRARIES (CamWorker ${OpenCV_LIBS})    
+target_link_libraries(CamWorker ${OpenCV_LIBS} pthread)    
