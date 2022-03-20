@@ -90,23 +90,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CamWorker.cpp" />
-    <ClCompile Include="FrameProcessors\FrameProcessor.cpp" />
-    <ClCompile Include="FrameProcessors\WorkerOneFrameProcessor.cpp" />
-    <ClCompile Include="FrameProcessors\WorkerTwoFrameProcessor.cpp" />
-    <ClCompile Include="FrameDispatcher.cpp" />
-    <ClCompile Include="FrameQueue.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\CamWorker.cpp" />
+    <ClCompile Include="src\FrameProcessors\FrameProcessor.cpp" />
+    <ClCompile Include="src\FrameProcessors\WorkerOneFrameProcessor.cpp" />
+    <ClCompile Include="src\FrameProcessors\WorkerTwoFrameProcessor.cpp" />
+    <ClCompile Include="src\FrameDispatcher.cpp" />
+    <ClCompile Include="src\FrameQueue.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CamWorker.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="FrameProcessors\WorkerOneFrameProcessor.h" />
-    <ClInclude Include="FrameProcessors\WorkerTwoFrameProcessor.h" />
-    <ClInclude Include="FrameDispatcher.h" />
-    <ClInclude Include="Frame.h" />
-    <ClInclude Include="FrameProcessors\FrameProcessor.h" />
-    <ClInclude Include="FrameQueue.h" />
+    <ClInclude Include="src\CamWorker.h" />
+    <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\FrameProcessors\WorkerOneFrameProcessor.h" />
+    <ClInclude Include="src\FrameProcessors\WorkerTwoFrameProcessor.h" />
+    <ClInclude Include="src\FrameDispatcher.h" />
+    <ClInclude Include="src\Frame.h" />
+    <ClInclude Include="src\FrameProcessors\FrameProcessor.h" />
+    <ClInclude Include="src\FrameQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
