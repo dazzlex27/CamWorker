@@ -4,25 +4,38 @@ using namespace cw;
 using namespace std::chrono;
 
 // this worker will try to process frames as fast as possible, but only at least one second apart
-// since processing and queueing incoming frames are done on separate threads with a mutex-sync,
-// there will never be a collision between processing and incoming frame queueing.
-// however, if there is a strict need to drop any incoming frame whilst processing is taking place,
-// then a simple atomic bool check will suffice to tell if we need to drop the incoming frame or not.
-// for the sake of simplicity, I decided not to implement the frame dropping behavior,
-// but it could be done very easily, albeit a little kludgy given the multithreaded architecture.
+// it will discard frames that come in when a frame processing is taking place
+// if a frame's grayscale histogram's mean value is above 127 (half of the spectrum), than the image will get flipped
+
+void WorkerTwoFrameProcessor::PushFrame(const Frame& frame)
+{
+	// discard the frame if processing is taking place
+	if (_processingInProgress)
+		return;
+
+	FrameProcessor::PushFrame(frame);
+}
 
 Frame WorkerTwoFrameProcessor::ProcessNextFrame(const Frame& frame)
 {
+	_processingInProgress = true;
+
 	const auto& frameTimestamp = frame.GetTimestamp();
 	auto timeSinceLastUpdate = duration_cast<milliseconds>(frameTimestamp - _lastProcessTimestamp).count();
 	if (timeSinceLastUpdate < 1000) // process frames no closer than 1 sec apart
+	{
+		_processingInProgress = false;
 		return Frame(cv::Mat(), hrc::now()); // empty
+	}
 
 	_lastProcessTimestamp = frameTimestamp;
 
 	const cv::Mat& originalImage = frame.GetImageData();
 	if (originalImage.empty())
+	{
+		_processingInProgress = false;
 		return Frame(cv::Mat(), hrc::now()); // empty
+	}
 
 	const bool needToFlipImage = CheckIfNeedToFlipImage(originalImage);
 
@@ -33,6 +46,7 @@ Frame WorkerTwoFrameProcessor::ProcessNextFrame(const Frame& frame)
 	else
 		finalImage = originalImage;
 
+	_processingInProgress = false;
 	return Frame(finalImage, frame.GetTimestamp());
 }
 
