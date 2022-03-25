@@ -10,7 +10,9 @@ namespace cw
 		long long _frameCounter;
 
 	public:
-		WorkerOneFrameProcessor() : _frameCounter(0) {}
+		WorkerOneFrameProcessor(CircularQueue<std::pair<std::string, Frame>>& processedFrameQueue)
+			: _frameCounter(0), FrameProcessor(processedFrameQueue)
+		{}
 
 		virtual std::string GetName() const override { return "w1"; }
 

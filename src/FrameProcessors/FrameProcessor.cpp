@@ -2,33 +2,22 @@
 
 using namespace cw;
 
-FrameProcessor::FrameProcessor()
-	: _incomingFrameQueue(10), _processedFrameQueue(30), _runFrameProcessing(true)
+FrameProcessor::FrameProcessor(CircularQueue<std::pair<std::string, Frame>>& processedFrameQueue)
+: _incomingFrameQueue(1), _processedFrameQueue(processedFrameQueue), _runFrameProcessing(true)
 {
 	_thProcessing = std::thread(&FrameProcessor::RunQueueProcessing, this);
-}
-
-FrameProcessor::FrameProcessor(const FrameProcessor& other)
-	: _incomingFrameQueue(other._incomingFrameQueue.GetCapacity()),	_processedFrameQueue(30), _runFrameProcessing(true)
-{
 }
 
 FrameProcessor::~FrameProcessor()
 {
 	_runFrameProcessing = false;
 	_incomingFrameQueue.StopQueue();
-	_processedFrameQueue.StopQueue();
 	_thProcessing.join();
 }
 
 void FrameProcessor::PushFrame(const Frame& frame)
 {
 	_incomingFrameQueue.Push(frame);
-}
-
-Frame cw::FrameProcessor::TryGetNextFrame(bool& success)
-{
-	return _processedFrameQueue.TryPop(success);
 }
 
 void cw::FrameProcessor::RunQueueProcessing()
@@ -41,6 +30,9 @@ void cw::FrameProcessor::RunQueueProcessing()
 
 		Frame processedFrame = ProcessNextFrame(nextFrame);
 		if (!processedFrame.GetImageData().empty())
-			_processedFrameQueue.Push(processedFrame);
+		{
+			std::pair<std::string, Frame> data(GetName(), processedFrame);
+			_processedFrameQueue.Push(data);
+		}
 	}
 }

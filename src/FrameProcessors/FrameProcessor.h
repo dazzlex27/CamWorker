@@ -11,17 +11,15 @@ namespace cw
 	{
 	private:
 		CircularQueue<Frame> _incomingFrameQueue;
-		CircularQueue<Frame> _processedFrameQueue;
+		CircularQueue<std::pair<std::string, Frame>>& _processedFrameQueue;
 		std::thread _thProcessing;
 		std::atomic<bool> _runFrameProcessing;
 
 	public:
-		FrameProcessor();
-		FrameProcessor(const FrameProcessor& other);
+		FrameProcessor(CircularQueue<std::pair<std::string, Frame>>& processedFrameQueue);
 		virtual ~FrameProcessor();
 
 		virtual void PushFrame(const Frame& frame);
-		Frame TryGetNextFrame(bool& success);
 		virtual std::string GetName() const = 0;
 
 	private:

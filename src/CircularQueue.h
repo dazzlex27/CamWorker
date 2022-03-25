@@ -19,7 +19,10 @@ namespace cw
 		unsigned int _capacity;
 
 	public:
-		CircularQueue(unsigned int capacity) : _capacity(capacity), _disposed(false) {}
+		CircularQueue(unsigned int capacity)
+			: _capacity(capacity), _disposed(false)
+		{}
+
 		~CircularQueue()
 		{
 			StopQueue();
@@ -29,7 +32,7 @@ namespace cw
 		{
 			std::unique_lock<std::mutex> lock(_mutex);
 			_disposed = true;
-			_cond.notify_one();
+			_cond.notify_all();
 		}
 
 		void Push(const T& element)
@@ -44,7 +47,7 @@ namespace cw
 
 			_queue.emplace(element);
 
-			_cond.notify_one();
+			_cond.notify_all();
 		}
 
 		// this will return the next element in queue or wait until an element appears in the queue

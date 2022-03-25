@@ -11,8 +11,8 @@ namespace cw
 		std::atomic<bool> _processingInProgress;
 
 	public:
-		WorkerTwoFrameProcessor()
-			: _processingInProgress(false), _lastProcessTimestamp(hrc::duration(0)) 
+		WorkerTwoFrameProcessor(CircularQueue<std::pair<std::string, Frame>>& processedFrameQueue)
+			: _processingInProgress(false), _lastProcessTimestamp(hrc::duration(0)), FrameProcessor(processedFrameQueue)
 		{}
 
 		virtual void PushFrame(const Frame& frame) override;

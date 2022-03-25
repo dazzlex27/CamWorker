@@ -1,59 +1,80 @@
 #include "CamWorker.h"
-#include "CircularQueue.h"
 #include "FrameDispatcher.h"
 #include "FrameProcessors/WorkerOneFrameProcessor.h"
 #include "FrameProcessors/WorkerTwoFrameProcessor.h"
+#include <opencv2/highgui.hpp>
 
 using namespace cw;
 
+CamWorker::CamWorker()
+	: _runLoop(false), _rawFrameQueue(10), _procesedFrameQueue(30)
+{
+	_workers = CreateWorkers();
+}
+
 void CamWorker::Run()
 {
-	cv::VideoCapture cap(0); // can only be created from the main (UI) thread
-
-	FrameDispatcher dispatcher(cap);
-	auto workers = CreateWorkers();
-
-	for (const auto& worker : workers)
+	if (_workers.empty())
 	{
-		dispatcher.AddSubscriber(worker);
-		cv::namedWindow(worker->GetName(), cv::WINDOW_AUTOSIZE);
+		std::cout << "no workers were created, exiting..." << std::endl;
+		return;
 	}
 
-	bool runLoop = true;
+	cv::VideoCapture cap(0); // can only be created from the main (UI) thread
+	FrameDispatcher dispatcher(cap, _rawFrameQueue);
+
+	for (const auto& worker : _workers)
+		cv::namedWindow(worker->GetName(), cv::WINDOW_AUTOSIZE);
+
+	_runLoop = true;
 	dispatcher.Start();
+	_thNofify = std::thread(&CamWorker::RunWorkerNotification, this);
 
 	// poll workers for processed frames and display those frames as soon as they are ready
-	while (dispatcher.IsActive() && runLoop)
+	while (dispatcher.IsActive() && _runLoop)
 	{
-		if (workers.empty())
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100)); // avoid high CPU usage
-			continue;
-		}
-
-		for (auto& worker : workers)
-		{
-			bool success = false;
-			const auto nextFrame = worker->TryGetNextFrame(success);
-			if (success)
-				cv::imshow(worker->GetName(), nextFrame.GetImageData());
-		}
+		std::pair<std::string, Frame> frameData = _procesedFrameQueue.Pop();
+		cv::imshow(frameData.first, frameData.second.GetImageData());
 
 		const auto key = cv::waitKey(1); // only works when invoked from the main (UI) thread
 		if (key != -1) // press any key to exit
-			runLoop = false;
+			_runLoop = false;
 	}
 
-	cv::destroyAllWindows(); // clean up
+	Stop();
 }
 
 // create and add custom workers here
-std::vector<std::shared_ptr<cw::FrameProcessor>> CamWorker::CreateWorkers()
+std::vector<std::shared_ptr<FrameProcessor>> CamWorker::CreateWorkers()
 {
 	std::vector<std::shared_ptr<cw::FrameProcessor>> workers;
 	workers.reserve(2);
-	workers.emplace_back(std::make_shared<cw::WorkerOneFrameProcessor>());
-	workers.emplace_back(std::make_shared<cw::WorkerTwoFrameProcessor>());
+	workers.emplace_back(std::make_shared<cw::WorkerOneFrameProcessor>(_procesedFrameQueue));
+	workers.emplace_back(std::make_shared<cw::WorkerTwoFrameProcessor>(_procesedFrameQueue));
 
 	return workers;
+}
+
+void CamWorker::RunWorkerNotification()
+{
+	std::cout << "starting worker notification..." << std::endl;
+
+	while (_runLoop)
+	{
+		Frame nextFrame = _rawFrameQueue.Pop();
+
+		for (auto& worker : _workers)
+			worker->PushFrame(nextFrame);
+	}
+
+	std::cout << "worker notification finished" << std::endl;
+}
+
+void CamWorker::Stop()
+{
+	_runLoop = false;
+	_rawFrameQueue.StopQueue();
+	_procesedFrameQueue.StopQueue();
+	_thNofify.join();
+	cv::destroyAllWindows();
 }

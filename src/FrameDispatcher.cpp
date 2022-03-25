@@ -3,15 +3,14 @@
 
 using namespace cw;
 
-FrameDispatcher::FrameDispatcher(cv::VideoCapture& capture, const uint queueCapacity)
-	: _capture(capture), _queue(queueCapacity)
+FrameDispatcher::FrameDispatcher(cv::VideoCapture& capture, CircularQueue<Frame>& frameQueue)
+	: _capture(capture), _queue(frameQueue)
 {
 }
 
 FrameDispatcher::~FrameDispatcher()
 {
 	Stop();
-	RemoveAllSubscribers();
 }
 
 void FrameDispatcher::Start()
@@ -20,8 +19,7 @@ void FrameDispatcher::Start()
 		return;
 
 	_isFeedActive = true;
-	_thRead = std::thread(&FrameDispatcher::RunFeedReading, this);
-	_thNotify = std::thread(&FrameDispatcher::RunSubscriberNotification, this);
+	_thRead = std::thread(&FrameDispatcher::RunFrameDispatching, this);
 }
 
 void FrameDispatcher::Stop()
@@ -29,25 +27,13 @@ void FrameDispatcher::Stop()
 	if (!_isFeedActive)
 		return;
 
-	_queue.StopQueue();
 	_isFeedActive = false;
 	_thRead.join();
-	_thNotify.join();
 }
 
-void FrameDispatcher::AddSubscriber(const std::shared_ptr<FrameProcessor>& processor)
+void FrameDispatcher::RunFrameDispatching()
 {
-	_subscribers.emplace_back(processor);
-}
-
-void FrameDispatcher::RemoveAllSubscribers()
-{
-	_subscribers.clear();
-}
-
-void FrameDispatcher::RunFeedReading()
-{
-	std::cout << "starting feed reading..." << std::endl;
+	std::cout << "starting frame dispatching..." << std::endl;
 
 	// set up specific video config if necessary
 	//_capture.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
@@ -78,27 +64,5 @@ void FrameDispatcher::RunFeedReading()
 		_queue.Push(frame);
 	}
 
-	std::cout << "feed reading finished" << std::endl;
-}
-
-void FrameDispatcher::RunSubscriberNotification()
-{
-	std::cout << "starting subscriber notification..." << std::endl;
-
-	while (_isFeedActive)
-	{
-		if (_subscribers.empty())
-		{
-			// avoid high CPU usage when queue is empty
-			std::this_thread::sleep_for(std::chrono::milliseconds(10)); 
-			continue;
-		}
-
-		Frame nextFrame = _queue.Pop();
-
-		for (auto& subscriber : _subscribers)
-			subscriber->PushFrame(nextFrame);
-	}
-
-	std::cout << "subscriber notification finished" << std::endl;
+	std::cout << "frame dispatching finished" << std::endl;
 }
